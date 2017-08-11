@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmt.orm.test.mybatis.mapper.UserMapper">
+	<select id="get" resultType="com.lmt.orm.test.model.User" parameterType="int">
+		select 
+		  id as id,
+		  username as username,
+		  realname as realname,
+		  password as password,
+		  email as email,
+		  phone as phone,
+		  salt as salt,
+		  create_time as createTime
+		from lmt_user 
+		<where>
+			id = #{user.id} and #{round} = #{round}
+		</where>
+	</select>
+	<select id="listByPage" resultType="com.lmt.orm.test.model.User" parameterType="com.lmt.orm.common.model.PaginationModel">
+		select 
+		  id as id,
+		  username as username,
+		  realname as realname,
+		  password as password,
+		  email as email,
+		  phone as phone,
+		  salt as salt,
+		  create_time as createTime
+		from lmt_user 
+		<where>
+			<if test="t.username != null and t.username != ''">username = #{t.username}</if>
+		</where>
+	</select>
+</mapper>
