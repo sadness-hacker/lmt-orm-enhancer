@@ -93,7 +93,7 @@ public class PaginationModel<T> implements Serializable {
 			this.limit = 10;
 		}
 		totalPage = (int) (totalNum / limit);
-		if(totalPage%limit > 0){
+		if(totalNum % limit > 0){
 			this.totalPage = this.totalPage + 1;
 		}
 		this.totalNum = totalNum;
