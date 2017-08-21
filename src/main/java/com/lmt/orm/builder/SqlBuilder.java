@@ -40,12 +40,12 @@ public class SqlBuilder {
 		if(!info.isAutoIncreatmentId()){
 			FieldInfo field = info.getIdField();
 			paramsNames.add(field.getColumnName());
-			nameBuilder.append(field.getColumnName());
+			nameBuilder.append("`").append(field.getColumnName()).append("`");
 			valueBuilder.append("?");
 		}
 		for(FieldInfo field : fieldList){
 			paramsNames.add(field.getColumnName());
-			nameBuilder.append(",").append(field.getColumnName());
+			nameBuilder.append(",`").append(field.getColumnName()).append("`");
 			valueBuilder.append(",").append("?");
 		}
 		String nb = nameBuilder.toString();
@@ -86,7 +86,7 @@ public class SqlBuilder {
 		StringBuilder nameBuilder = new StringBuilder();
 		for(FieldInfo field : fieldList){
 			paramsNames.add(field.getColumnName());
-			nameBuilder.append(",").append(field.getColumnName()).append("=?");
+			nameBuilder.append(",`").append(field.getColumnName()).append("`=?");
 		}
 		String nb = nameBuilder.toString();
 		if(nb.startsWith(",")){
@@ -99,9 +99,9 @@ public class SqlBuilder {
 		.append(tableName)
 		.append(" set ")
 		.append(nb)
-		.append(" where ")
+		.append(" where `")
 		.append(id.getColumnName())
-		.append(" = ?");
+		.append("` = ?");
 		bean = new SqlBean();
 		bean.setSqlBuilder(sb);
 		bean.setParamNames(paramsNames);
@@ -153,18 +153,18 @@ public class SqlBuilder {
 		FieldInfo id = info.getIdField();
 		List<FieldInfo> fieldList = info.getFieldInfoList();
 		StringBuilder nameBuilder = new StringBuilder();
-		nameBuilder.append(id.getColumnName()).append(" as ").append(id.getFieldName());
+		nameBuilder.append(id.getColumnName()).append(" as `").append(id.getFieldName()).append("`");
 		for(FieldInfo field : fieldList){
-			nameBuilder.append(",").append(field.getColumnName()).append(" as ").append(field.getFieldName());
+			nameBuilder.append(",").append(field.getColumnName()).append(" as `").append(field.getFieldName()).append("`");
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ")
 		.append(nameBuilder)
 		.append(" from ")
 		.append(tableName)
-		.append(" order by ")
+		.append(" order by `")
 		.append(id.getColumnName())
-		.append(" desc");
+		.append("` desc");
 		bean = new SqlBean();
 		bean.setParamNames(new ArrayList<String>());
 		bean.setParam(new ArrayList<Object>());
@@ -192,18 +192,18 @@ public class SqlBuilder {
 		FieldInfo id = info.getIdField();
 		List<FieldInfo> fieldList = info.getFieldInfoList();
 		StringBuilder nameBuilder = new StringBuilder();
-		nameBuilder.append(id.getColumnName()).append(" as ").append(id.getFieldName());
+		nameBuilder.append("`").append(id.getColumnName()).append("` as `").append(id.getFieldName()).append("`");
 		for(FieldInfo field : fieldList){
-			nameBuilder.append(",").append(field.getColumnName()).append(" as ").append(field.getFieldName());
+			nameBuilder.append(",`").append(field.getColumnName()).append("` as `").append(field.getFieldName()).append("`");
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ")
 		.append(nameBuilder)
 		.append(" from ")
 		.append(tableName)
-		.append(" where ")
+		.append(" where `")
 		.append(id.getColumnName())
-		.append(" = ?");
+		.append("` = ?");
 		List<String> paramsNames = new ArrayList<String>(1);
 		paramsNames.add(id.getColumnName());
 		bean = new SqlBean();
@@ -242,7 +242,7 @@ public class SqlBuilder {
 		StringBuilder nameBuilder = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
 		if(o != null){
-			nameBuilder.append(id.getColumnName()).append("=?");
+			nameBuilder.append("`").append(id.getColumnName()).append("`=?");
 			params.add(o);
 		}
 		List<FieldInfo> fieldList = info.getFieldInfoList();
@@ -261,7 +261,7 @@ public class SqlBuilder {
 			if(o == null){
 				continue;
 			}
-			nameBuilder.append(" and ").append(field.getColumnName()).append("=?");
+			nameBuilder.append(" and `").append(field.getColumnName()).append("`=?");
 			params.add(o);
 		}
 		String nb = nameBuilder.toString().trim();
@@ -277,9 +277,9 @@ public class SqlBuilder {
 			sb.append(" where ")
 			.append(nb);
 		}
-		sb.append(" order by ")
+		sb.append(" order by `")
 		.append(id.getColumnName())
-		.append(" desc");
+		.append("` desc");
 		SqlBean bean = new SqlBean();
 		bean.setParam(params);
 		bean.setParamNames(new ArrayList<String>());
@@ -333,7 +333,7 @@ public class SqlBuilder {
 		StringBuilder nameBuilder = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
 		if(o != null){
-			nameBuilder.append(id.getColumnName()).append("=?");
+			nameBuilder.append("`").append(id.getColumnName()).append("`=?");
 			paramsNames.add(id.getFieldName());
 			params.add(o);
 		}
@@ -353,7 +353,7 @@ public class SqlBuilder {
 			if(o == null){
 				continue;
 			}
-			nameBuilder.append(" and ").append(field.getColumnName()).append("=?");
+			nameBuilder.append(" and `").append(field.getColumnName()).append("`=?");
 			paramsNames.add(field.getFieldName());
 			params.add(o);
 		}
@@ -400,11 +400,11 @@ public class SqlBuilder {
 			StringBuilder sb = new StringBuilder();
 			FieldInfo fi = bi.getIdField();
 			if(fi != null){
-				sb.append(alias).append(fi.getColumnName()).append(" as ").append(fi.getFieldName());
+				sb.append(alias).append(fi.getColumnName()).append(" as `").append(fi.getFieldName()).append("`");
 			}
 			List<FieldInfo> list = bi.getFieldInfoList();
 			for(FieldInfo field : list){
-				sb.append(",").append(alias).append(field.getColumnName()).append(" as ").append(field.getFieldName());
+				sb.append(",").append(alias).append(field.getColumnName()).append(" as `").append(field.getFieldName()).append("`");
 			}
 			sql = sb.toString();
 			if(sql.startsWith(",")){
@@ -463,12 +463,12 @@ public class SqlBuilder {
 				Method method = bi.findReadMethod(idField.getFieldName());
 				Object o = MethodUtil.invoke(method, update, new Object[]{});
 				if(o != null){
-					setParamBuilder.append(idField.getColumnName()).append("=?");
+					setParamBuilder.append("`").append(idField.getColumnName()).append("`=?");
 					params.add(o);
 				}
 				o = MethodUtil.invoke(method, filter, new Object[]{});
 				if(o != null){
-					whereBuilder.append(idField.getColumnName()).append("=?");
+					whereBuilder.append("`").append(idField.getColumnName()).append("`=?");
 					whereParams.add(o);
 				}
 			}
@@ -476,12 +476,12 @@ public class SqlBuilder {
 				Method method = bi.findReadMethod(f.getFieldName());
 				Object o = MethodUtil.invoke(method, update, new Object[]{});
 				if(o != null){
-					setParamBuilder.append(",").append(f.getColumnName()).append("=?");
+					setParamBuilder.append(",`").append(f.getColumnName()).append("`=?");
 					params.add(o);
 				}
 				o = MethodUtil.invoke(method, filter, new Object[]{});
 				if(o != null){
-					whereBuilder.append(" and ").append(f.getColumnName()).append("=?");
+					whereBuilder.append(" and `").append(f.getColumnName()).append("`=?");
 					whereParams.add(o);
 				}
 			}
@@ -525,7 +525,7 @@ public class SqlBuilder {
 				Method method = bi.findReadMethod(idField.getFieldName());
 				Object o = MethodUtil.invoke(method, t, new Object[]{});
 				if(o != null){
-					whereBuilder.append(idField.getColumnName()).append("=?");
+					whereBuilder.append("`").append(idField.getColumnName()).append("`=?");
 					params.add(o);
 				}
 			}
@@ -533,7 +533,7 @@ public class SqlBuilder {
 				Method method = bi.findReadMethod(f.getFieldName());
 				Object o = MethodUtil.invoke(method, t, new Object[]{});
 				if(o != null){
-					whereBuilder.append(" and ").append(f.getColumnName()).append("=?");
+					whereBuilder.append(" and `").append(f.getColumnName()).append("`=?");
 					params.add(o);
 				}
 			}
